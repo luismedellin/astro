@@ -1,0 +1,12 @@
+---
+// name, url
+interface Props {
+  name: string;
+  url: string;
+}
+const { name, url } = Astro.props as Props;
+---
+
+<div class="rounded border flex flex-col items-center justify-center p-2">
+  <img src={url} alt={name} />
+</div>

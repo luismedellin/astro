@@ -1,0 +1,49 @@
+---
+// Código Server Side Only - Momento de construcción BUILD TIME
+import MainLayout from "../layouts/MainLayout.astro";
+import PokemonCard from "../components/pokemon/PokemonCard.astro";
+
+import type {
+  Result,
+  PokemonListResponse,
+} from "../interfaces/pokemon-list.respose";
+import type {
+  PokemonItemResult,
+  Pokemon,
+} from "../interfaces/pokemon-item.result";
+
+const resp = await fetch("https://pokeapi.co/api/v2/pokemon");
+const data = (await resp.json()) as PokemonListResponse;
+console.log(data);
+
+// const pokemonTasks: Promise<PokemonItemResult>[] = data.results.map((pokemon: Result) => {
+// 	return fetch(pokemon.url)
+// 		.then((resp) => resp.json())
+// 		.then((pokemonItem: PokemonItemResult) => {
+// 			return pokemonItem;
+// 		});
+// });
+// const pokemonList = await Promise.all(pokemonTasks);
+const pokemonList: Pokemon[] = data.results.map(
+  (pokemon: Result, index: number) => {
+    return {
+      name: pokemon.name,
+      url: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${index + 1}.png`,
+    } as Pokemon;
+  }
+);
+
+const tile = "Pokémon Static | Home";
+---
+
+<MainLayout title={tile}>
+  <h1 class="text-3xl">Listado de Pokémons</h1>
+  <hr />
+
+  <section
+    aria-label="Listado de Pokémons"
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mt-5"
+  >
+    {pokemonList.map(({ name, url }) => <PokemonCard name={name} url={url} />)}
+  </section>
+</MainLayout>
